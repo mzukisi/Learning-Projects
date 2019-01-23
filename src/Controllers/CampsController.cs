@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using CoreCodeCamp.Data;
+using CoreCodeCamp.Models;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -13,9 +15,11 @@ namespace CoreCodeCamp.Controllers
     public class CampsController : ControllerBase
     {
         private readonly ICampRepository _repository;
-        public CampsController(ICampRepository repository)
+        private readonly IMapper _mapper;
+        public CampsController(ICampRepository repository, IMapper mapper)
         {
             _repository = repository;
+            _mapper = mapper;
         }
         // GET: api/<controller>
         [HttpGet]
@@ -24,8 +28,8 @@ namespace CoreCodeCamp.Controllers
             try
             {
                 var result = await _repository.GetAllCampsAsync();
-
-                return Ok(result);
+                CampModel[] models = _mapper.Map<CampModel[]>(result);
+                return Ok(models);
             }
             catch (Exception)
             {
